@@ -1,0 +1,17 @@
+{
+  "name": "xyz",
+  "version": "0.0.0",
+  "description": "Publish npm packages with fewer screwups",
+  "author": "David Chambers <dc@davidchambers.me>",
+  "keywords": ["cli", "publish", "release", "tool"],
+  "bin": "./xyz",
+  "homepage": "https://github.com/davidchambers/xyz",
+  "bugs": "https://github.com/davidchambers/xyz/issues",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/davidchambers/xyz.git"
+  },
+  "dependencies": {
+    "semver": "2.2.x"
+  }
+}
