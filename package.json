@@ -18,5 +18,8 @@
   },
   "dependencies": {
     "semver": "2.2.x"
-  }
+  },
+  "bundledDependencies": [
+    "semver"
+  ]
 }
