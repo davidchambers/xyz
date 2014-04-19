@@ -27,6 +27,11 @@ Options:
         'X.Y.Z' acts as a placeholder for the version number.
         'Version X.Y.Z' is assumed if this option is omitted.
 
+-s --script <path>
+        Specify a script to be run after the confirmation prompt.
+        It is passed VERSION and PREVIOUS_VERSION as environment
+        variables. xyz aborts if the script's exit code is not 0.
+
 -t --tag <template>
         Specify the format of the tag name. As with --message,
         'X.Y.Z' acts as a placeholder for the version number.
@@ -51,6 +56,7 @@ dir="$(cd -P "$(dirname "$path")" && pwd)"
 branch=master
 increment=patch
 message_template='Version X.Y.Z'
+declare -a scripts
 tag_template=vX.Y.Z
 dry_run=false
 
@@ -70,6 +76,7 @@ while (($# > 0)) ; do
     -b|--branch)    branch="$1"           ; shift ;;
     -i|--increment) increment="$1"        ; shift ;;
     -m|--message)   message_template="$1" ; shift ;;
+    -s|--script)    scripts+=("$1")       ; shift ;;
     -t|--tag)       tag_template="$1"     ; shift ;;
     --dry-run)      dry_run=true          ;;
     *)
@@ -111,6 +118,11 @@ run() {
     eval "$1"
   fi
 }
+
+for script in "${scripts[@]}" ; do
+  [[ $script == /* ]] || script="$(pwd)/$script"
+  run "VERSION=$next_version PREVIOUS_VERSION=$version '$script'"
+done
 
 run "node -e '$(echo "
   var o = require('./package.json');
