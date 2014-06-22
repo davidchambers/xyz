@@ -21,8 +21,9 @@ Options:
 
 -i --increment <level>
         Specify the level of the current version number to increment.
-        Valid levels are 'major', 'minor', 'patch', and 'prerelease'.
-        'patch' is assumed if this option is omitted.
+        Valid levels: 'major', 'minor', 'patch', 'premajor', 'preminor',
+        'prepatch', and 'prerelease'. 'patch' is assumed if this option
+        is omitted.
 
 -m --message <template>
         Specify the format of the commit (and tag) message.
@@ -96,7 +97,7 @@ while (($# > 0)) ; do
 done
 
 case "$increment" in
-  major|minor|patch|prerelease) ;;
+  major|minor|patch|premajor|preminor|prepatch|prerelease) ;;
   *) echo "Invalid --increment" >&2 ; exit 1 ;;
 esac
 
