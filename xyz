@@ -7,7 +7,7 @@ Usage: xyz [options]
 Publish a new version of the npm package in the current working directory.
 This involves updating the version number in package.json, committing this
 change (along with any staged changes), tagging the commit, pushing to the
-git remote named origin, and finally publishing to the public npm registry.
+remote git repository, and finally publishing to the public npm registry.
 
 If present, bower.json and component.json are updated along with package.json.
 
@@ -28,6 +28,12 @@ Options:
         Specify the format of the commit (and tag) message.
         'X.Y.Z' acts as a placeholder for the version number.
         'Version X.Y.Z' is assumed if this option is omitted.
+
+-r --repo <repository>
+        Specify the remote repository to which to 'git push'.
+        The value must be either a URL or the name of a remote.
+        The latter is not recommended: it relies on local state.
+        'origin' is assumed if this option is omitted.
 
 -s --script <path>
         Specify a script to be run after the confirmation prompt.
@@ -58,6 +64,7 @@ dir="$(cd -P "$(dirname "$path")" && pwd)"
 branch=master
 increment=patch
 message_template='Version X.Y.Z'
+repo=origin
 declare -a scripts
 tag_template=vX.Y.Z
 dry_run=false
@@ -78,6 +85,7 @@ while (($# > 0)) ; do
     -b|--branch)    branch="$1"           ; shift ;;
     -i|--increment) increment="$1"        ; shift ;;
     -m|--message)   message_template="$1" ; shift ;;
+    -r|--repo)      repo="$1"             ; shift ;;
     -s|--script)    scripts+=("$1")       ; shift ;;
     -t|--tag)       tag_template="$1"     ; shift ;;
     --dry-run)      dry_run=true          ;;
@@ -142,6 +150,6 @@ inc component.json
 
 run "git commit --message '$message'"
 run "git tag --annotate '$tag' --message '$message'"
-run "git push origin 'refs/heads/$branch' 'refs/tags/$tag'"
+run "git push '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
 
 run "npm publish"
