@@ -1,4 +1,4 @@
-XYZ = ./xyz
+XYZ = ./xyz --repo git@github.com:davidchambers/xyz.git
 
 
 .PHONY: release-major release-minor release-patch
