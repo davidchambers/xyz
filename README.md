@@ -30,15 +30,11 @@ If one is using Make or a similar tool, it's helpful to define aliases for
 the various publish commands:
 
 ```make
-XYZ = node_modules/.bin/xyz --branch stable --tag X.Y.Z
+XYZ = node_modules/.bin/xyz --repo git@github.com:owner/repo.git
 
 .PHONY: release-major release-minor release-patch
-release-major:
-    $(XYZ) --increment major
-release-minor:
-    $(XYZ) --increment minor
-release-patch:
-    $(XYZ) --increment patch
+release-major release-minor release-patch:
+	@$(XYZ) --increment $(@:release-%=%)
 ```
 
 This makes it simple to publish a release of the desired kind:
