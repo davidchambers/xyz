@@ -159,6 +159,6 @@ inc component.json
 
 run "git commit --message '$message'"
 run "git tag --annotate '$tag' --message '$message'"
-run "git push '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
+run "git push --atomic '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
 
 run "npm publish"
