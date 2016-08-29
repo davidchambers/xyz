@@ -10,6 +10,7 @@
     "release",
     "tool"
   ],
+  "license": "WTFPL",
   "bin": "./xyz",
   "homepage": "https://github.com/davidchambers/xyz",
   "bugs": "https://github.com/davidchambers/xyz/issues",
