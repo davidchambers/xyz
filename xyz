@@ -119,8 +119,11 @@ next_version=$("$dir/node_modules/.bin/semver" -i "$increment" "$version") ||
 message="${message_template//X.Y.Z/$next_version}"
 tag="${tag_template//X.Y.Z/$next_version}"
 
-bold=$(tput bold)
-reset=$(tput sgr0)
+if type tput &>/dev/null ; then
+  bold=$(tput bold)
+  reset=$(tput sgr0)
+fi
+
 printf "Current version is ${bold}${version}${reset}. "
 printf "Press [enter] to publish ${bold}${name}@${next_version}${reset}."
 read -s # suppress user input
