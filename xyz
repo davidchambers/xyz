@@ -164,4 +164,4 @@ run "git commit --message '$message'"
 run "git tag --annotate '$tag' --message '$message'"
 run "git push --atomic '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
 
-run "npm publish"
+node -e 'process.exit(require("./package.json").private === true ? 1 : 0)' && run "npm publish"
