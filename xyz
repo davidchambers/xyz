@@ -19,6 +19,9 @@ Options:
         publication of feature branches. 'master' is assumed if this
         option is omitted.
 
+-e --edit
+        Allow the commit message to be edited before the commit is made.
+
 -i --increment <level>
         Specify the level of the current version number to increment.
         Valid levels: 'major', 'minor', 'patch', 'premajor', 'preminor',
@@ -63,6 +66,7 @@ done
 dir="$(cd -P "$(dirname "$path")" && pwd)"
 
 branch=master
+edit=false
 increment=patch
 message_template='Version X.Y.Z'
 repo=origin
@@ -84,6 +88,7 @@ while (($# > 0)) ; do
       exit
       ;;
     -b|--branch)    branch="$1"           ; shift ;;
+    -e|--edit)      edit=true             ;;
     -i|--increment) increment="$1"        ; shift ;;
     -m|--message)   message_template="$1" ; shift ;;
     -r|--repo)      repo="$1"             ; shift ;;
@@ -160,7 +165,7 @@ inc() {
 inc package.json
 inc component.json
 
-run "git commit --message '$message'"
+run "git commit$([[ $edit == true ]] && printf ' --edit') --message '$message'"
 run "git tag --annotate '$tag' --message '$message'"
 run "git push --atomic '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
 
