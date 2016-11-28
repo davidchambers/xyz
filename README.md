@@ -12,7 +12,7 @@ Several things will happen if one elects to continue:
     git add 'package.json'
     git commit --message 'Version 0.6.1'
     git tag --annotate 'v0.6.1' --message 'Version 0.6.1'
-    git push origin 'refs/heads/master' 'refs/tags/v0.6.1'
+    git push --atomic 'origin' 'refs/heads/master' 'refs/tags/v0.6.1'
     npm publish # Only for non-private packages.
 
 xyz accepts several optional arguments, described in the help text:
@@ -22,12 +22,21 @@ xyz accepts several optional arguments, described in the help text:
 ### Integration
 
 Installing xyz globally is okay, but it's good practice to add it as a dev
-dependency and reference it like so:
+dependency.
 
-    $ node_modules/.bin/xyz
+#### npm
 
-If one is using Make or a similar tool, it's helpful to define aliases for
-the various publish commands:
+```json
+  "scripts": {
+    "release": "xyz --repo git@github.com:owner/repo.git --increment",
+  }
+```
+
+```console
+$ npm run release minor
+```
+
+#### Make
 
 ```make
 XYZ = node_modules/.bin/xyz --repo git@github.com:owner/repo.git
@@ -37,6 +46,6 @@ release-major release-minor release-patch:
 	@$(XYZ) --increment $(@:release-%=%)
 ```
 
-This makes it simple to publish a release of the desired kind:
-
-    $ make release-patch
+```console
+$ make release-minor
+```
