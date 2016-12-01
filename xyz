@@ -55,6 +55,7 @@ Options:
 "
 
 # http://stackoverflow.com/a/246128/312785
+unset CDPATH
 path="${BASH_SOURCE[0]}"
 while [ -h "$path" ] ; do
   dir="$(cd -P "$(dirname "$path")" && pwd)"
