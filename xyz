@@ -31,6 +31,10 @@ Options:
         'X.Y.Z' acts as a placeholder for the version number.
         'Version X.Y.Z' is assumed if this option is omitted.
 
+   --publish-command <command>
+        Specify command to run as final step. 'npm publish' is
+        assumed if this option is omitted.
+
 -r --repo <repository>
         Specify the remote repository to which to 'git push'.
         The value must be either a URL or the name of a remote.
@@ -47,7 +51,7 @@ Options:
         'X.Y.Z' acts as a placeholder for the version number.
         'vX.Y.Z' is assumed if this option is omitted.
 
---dry-run
+   --dry-run
         Print the commands without evaluating them.
 
 -v --version
@@ -68,6 +72,7 @@ branch=master
 edit=false
 increment=patch
 message_template='Version X.Y.Z'
+publish_command='npm publish'
 repo=origin
 declare -a scripts
 tag_template=vX.Y.Z
@@ -86,14 +91,15 @@ while (($# > 0)) ; do
       node -p "require('$dir/package.json').version"
       exit
       ;;
-    -b|--branch)    branch="$1"           ; shift ;;
-    -e|--edit)      edit=true             ;;
-    -i|--increment) increment="$1"        ; shift ;;
-    -m|--message)   message_template="$1" ; shift ;;
-    -r|--repo)      repo="$1"             ; shift ;;
-    -s|--script)    scripts+=("$1")       ; shift ;;
-    -t|--tag)       tag_template="$1"     ; shift ;;
-    --dry-run)      dry_run=true          ;;
+    -b|--branch)          branch="$1"           ; shift ;;
+    -e|--edit)            edit=true             ;;
+    -i|--increment)       increment="$1"        ; shift ;;
+    -m|--message)         message_template="$1" ; shift ;;
+       --publish-command) publish_command="$1"  ; shift ;;
+    -r|--repo)            repo="$1"             ; shift ;;
+    -s|--script)          scripts+=("$1")       ; shift ;;
+    -t|--tag)             tag_template="$1"     ; shift ;;
+       --dry-run)         dry_run=true          ;;
     *)
       echo "Unrecognized option $option" >&2
       exit 1
@@ -167,4 +173,4 @@ run "git commit$([[ $edit == true ]] && printf ' --edit') --message '$message'"
 run "git tag --annotate '$tag' --message '$message'"
 run "git push --atomic '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
 
-node -e 'process.exit(require("./package.json").private === true ? 1 : 0)' && run "npm publish"
+node -e 'process.exit(require("./package.json").private === true ? 1 : 0)' && run "$publish_command"
