@@ -123,7 +123,15 @@ name=$(node -p "require('./package.json').name" 2>/dev/null) ||
 version=$(node -p "require('./package.json').version" 2>/dev/null) ||
   (echo "Cannot read package version" >&2 ; exit 1)
 
-next_version=$("$dir/node_modules/.bin/semver" -i "$increment" "$version") ||
+npm_bin_dir=$(npm bin)
+if [ -f "$npm_bin_dir/semver" ]; then
+  # npm v3 and above puts scripts in the dependent project's bin dir
+  bin_dir=$npm_bin_dir
+else
+  # older versions of npm put scripts in the dependency's bin dir
+  bin_dir="$dir/node_modules/.bin"
+fi
+next_version=$("$bin_dir/semver" -i "$increment" "$version") ||
   (echo "Cannot increment version number" >&2 ; exit 1)
 
 message="${message_template//X.Y.Z/$next_version}"
