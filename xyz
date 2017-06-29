@@ -46,6 +46,11 @@ Options:
         It is passed VERSION and PREVIOUS_VERSION as environment
         variables. xyz aborts if the script's exit code is not 0.
 
+-S --gpg-sign <keyid>
+        GPG-sign the commit. The keyid argument is optional and
+        defaults to the committer identity; if specified, it must
+        be stuck to the option without a space.
+
 -t --tag <template>
         Specify the format of the tag name. As with --message,
         'X.Y.Z' acts as a placeholder for the version number.
@@ -98,6 +103,7 @@ while (($# > 0)) ; do
        --publish-command) publish_command="$1"  ; shift ;;
     -r|--repo)            repo="$1"             ; shift ;;
     -s|--script)          scripts+=("$1")       ; shift ;;
+    -S|--gpg-sign)        key_id="$1"         ; shift ;;
     -t|--tag)             tag_template="$1"     ; shift ;;
        --dry-run)         dry_run=true          ;;
     *)
@@ -169,7 +175,7 @@ inc() {
 
 inc package.json
 
-run "git commit$([[ $edit == true ]] && printf ' --edit') --message '$message'"
+run "git commit$([[ $edit == true ]] && printf ' --edit') --message '$message' --gpg-sign 'key_id'"
 run "git tag --annotate '$tag' --message '$message'"
 run "git push --atomic '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
 
