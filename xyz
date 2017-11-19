@@ -32,8 +32,10 @@ Options:
         'Version X.Y.Z' is assumed if this option is omitted.
 
    --publish-command <command>
-        Specify command to run as final step. 'npm publish' is
-        assumed if this option is omitted.
+        Specify the command to be run to publish the package. It may refer
+        to the VERSION and PREVIOUS_VERSION environment variables. A no-op
+        command (':' or 'true') prevents the package from being published
+        to a registry. 'npm publish' is assumed if this option is omitted.
 
 -r --repo <repository>
         Specify the remote repository to which to 'git push'.
@@ -169,4 +171,4 @@ run "git commit$([[ $edit == true ]] && printf ' --edit') --message '$message'"
 run "git tag --annotate '$tag' --message '$message'"
 run "git push --atomic '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
 
-node -e 'process.exit(require("./package.json").private === true ? 1 : 0)' && run "$publish_command"
+run "VERSION=$next_version PREVIOUS_VERSION=$version $publish_command"

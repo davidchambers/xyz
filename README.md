@@ -17,7 +17,7 @@ Several things will happen if one elects to continue:
     git commit --message 'Version 0.6.1'
     git tag --annotate 'v0.6.1' --message 'Version 0.6.1'
     git push --atomic 'origin' 'refs/heads/master' 'refs/tags/v0.6.1'
-    npm publish # Only for non-private packages.
+    VERSION=0.6.1 PREVIOUS_VERSION=0.6.0 npm publish
 
 xyz accepts several optional arguments, described in the help text:
 
