@@ -143,32 +143,43 @@ read -r -s  # suppress user input
 echo        # output \n since [enter] output was suppressed
 
 run() {
-  echo "$1"
+  local arg
+  for arg ; do
+    if [[ $(printf "%q" "$arg") == "$arg" ]] ; then
+      printf "%s " "$arg"
+    else
+      printf "'%s' " "${arg//"'"/"'"'"'"'"'"'"'"}"
+    fi
+  done
+  echo
   if [[ $dry_run == false ]] ; then
-    eval "$1"
+    "$@"
   fi
 }
 
 # Prune before running tests to catch dependencies that have been
 # installed but not specified in the project's `package.json` file.
 
-run "npm prune"
-run "npm test"
+run npm prune
+run npm test
 
 for script in "${scripts[@]}" ; do
   [[ $script == /* ]] || script="$(pwd)/$script"
-  run "VERSION=$next_version PREVIOUS_VERSION=$version '$script'"
+  run env VERSION="$next_version" PREVIOUS_VERSION="$version" "$script"
 done
 
-run "VERSION=$next_version node -e "'"'"
-  var pkg = require('./package.json');
+run env VERSION="$next_version" node -e '
+  var pkg = require("./package.json");
   pkg.version = process.env.VERSION;
-  fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-"'"'
-run "git add package.json"
+  fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
+'
+run git add package.json
 
-run "git commit$([[ $edit == true ]] && printf ' --edit') --message '$message'"
-run "git tag --annotate '$tag' --message '$message'"
-run "git push --atomic '$repo' 'refs/heads/$branch' 'refs/tags/$tag'"
+declare -a commit_options=(--message "$message")
+[[ $edit == true ]] && commit_options+=(--edit)
+run git commit "${commit_options[@]}"
+run git tag --annotate "$tag" --message "$message"
+run git push --atomic "$repo" "refs/heads/$branch" "refs/tags/$tag"
 
-run "VERSION=$next_version PREVIOUS_VERSION=$version $publish_command"
+run env VERSION="$next_version" PREVIOUS_VERSION="$version" \
+        bash -c "$publish_command"
