@@ -111,7 +111,7 @@ case "$increment" in
   *) echo "Invalid --increment" >&2 ; exit 1 ;;
 esac
 
-[[ $(git rev-parse --abbrev-ref HEAD) == $branch ]] ||
+[[ $(git rev-parse --abbrev-ref HEAD) == "$branch" ]] ||
   (echo "Current branch does not match specified --branch" >&2 ; exit 1)
 
 git diff-files --quiet ||
@@ -134,10 +134,11 @@ if type tput &>/dev/null ; then
   reset=$(tput sgr0)
 fi
 
-printf "Current version is ${bold}${version}${reset}. "
-printf "Press [enter] to publish ${bold}${name}@${next_version}${reset}."
-read -s # suppress user input
-echo    # output \n since [enter] output was suppressed
+printf "Current version is %s. Press [enter] to publish %s." \
+       "${bold}${version}${reset}" \
+       "${bold}${name}@${next_version}${reset}"
+read -r -s  # suppress user input
+echo        # output \n since [enter] output was suppressed
 
 run() {
   echo "$1"
@@ -157,17 +158,12 @@ for script in "${scripts[@]}" ; do
   run "VERSION=$next_version PREVIOUS_VERSION=$version '$script'"
 done
 
-inc() {
-  if [[ -f "$1" ]] ; then
-    run "node -e '$(echo "
-      var o = require('./$1'); o.version = '$next_version';
-      require('fs').writeFileSync('./$1', JSON.stringify(o, null, 2) + '\n');
-    " | tr "'" '"' | tr -d "\n" | tr -s " " | sed -e "s/^ *//" -e "s/ *$//")'"
-    run "git add '$1'"
-  fi
-}
-
-inc package.json
+run "VERSION=$next_version node -e "'"'"
+  var pkg = require('./package.json');
+  pkg.version = process.env.VERSION;
+  fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+"'"'
+run "git add package.json"
 
 run "git commit$([[ $edit == true ]] && printf ' --edit') --message '$message'"
 run "git tag --annotate '$tag' --message '$message'"

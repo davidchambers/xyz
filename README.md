@@ -8,8 +8,12 @@ steps with a single command:
 
 Several things will happen if one elects to continue:
 
-    node -e 'var o = require("./package.json"); o.version = "0.6.1"; require("fs").writeFileSync("./package.json", JSON.stringify(o, null, 2) + "\n");'
-    git add 'package.json'
+    VERSION=0.6.1 node -e "
+      var pkg = require('./package.json');
+      pkg.version = process.env.VERSION;
+      fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+    "
+    git add package.json
     git commit --message 'Version 0.6.1'
     git tag --annotate 'v0.6.1' --message 'Version 0.6.1'
     git push --atomic 'origin' 'refs/heads/master' 'refs/tags/v0.6.1'
