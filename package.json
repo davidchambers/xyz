@@ -17,10 +17,5 @@
     "type": "git",
     "url": "git://github.com/davidchambers/xyz.git"
   },
-  "dependencies": {
-    "semver": "5.3.x"
-  },
-  "bundledDependencies": [
-    "semver"
-  ]
+  "dependencies": {}
 }
