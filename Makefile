@@ -1,5 +1,5 @@
 SHELLCHECK = shellcheck
-XYZ = ./xyz --repo git@github.com:davidchambers/xyz.git
+XYZ = ./xyz --repo git@github.com:davidchambers/xyz.git --publish-command 'read -r -p "One-time password: " && npm publish --otp "$$REPLY"'
 
 
 .PHONY: lint

@@ -53,3 +53,16 @@ release-major release-minor release-patch:
 ```console
 $ make release-minor
 ```
+
+### Two-factor authentication
+
+When [two-factor authentication][1] is enabled in __auth-and-writes__ mode,
+npm requires a one-time password when publishing a new version of a package.
+The `--publish-command` option can be used to prompt for a one-time password:
+
+```bash
+--publish-command 'read -r -p "One-time password: " && npm publish --otp "$REPLY"'
+```
+
+
+[1]: https://docs.npmjs.com/getting-started/using-two-factor-authentication
