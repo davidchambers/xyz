@@ -65,6 +65,11 @@ Options:
         Print xyz's version number and exit.
 "
 
+abort() {
+  printf "%s\n" "$1" >&2
+  exit 1
+}
+
 inc() {
   local prerelease_label="$1" increment="$2" version="$3"
   local number='0|[1-9][0-9]*'
@@ -117,62 +122,70 @@ inc() {
   printf %s "$version"
 }
 
-branch=master
-edit=false
-increment=patch
-message_template='Version X.Y.Z'
-prerelease_label=rc
-publish_command='npm publish'
-repo=origin
+declare -A options=(
+  [branch]=master
+  [dry-run]=false
+  [edit]=false
+  [increment]=patch
+  [message]='Version X.Y.Z'
+  [prerelease-label]=rc
+  [publish-command]='npm publish'
+  [repo]=origin
+  [tag]=vX.Y.Z
+)
 declare -a scripts
-tag_template=vX.Y.Z
-dry_run=false
 
 while (( $# > 0 )) ; do
-  option="$1"
-  shift
+  option="$1" ; shift
 
-  case "$option" in
-    -h|--help)
-      echo "$usage"
-      exit
-      ;;
-    -v|--version)
-      node -p 'require("xyz/package.json").version'
-      exit
-      ;;
-    -b|--branch)            branch="$1"           ; shift ;;
-    -e|--edit)              edit=true             ;;
-    -i|--increment)         increment="$1"        ; shift ;;
-    -m|--message)           message_template="$1" ; shift ;;
-       --prerelease-label)  prerelease_label="$1" ; shift ;;
-       --publish-command)   publish_command="$1"  ; shift ;;
-    -r|--repo)              repo="$1"             ; shift ;;
-    -s|--script)            scripts+=("$1")       ; shift ;;
-    -t|--tag)               tag_template="$1"     ; shift ;;
-       --dry-run)           dry_run=true          ;;
+  case $option in
+    -b) option=--branch ;;
+    -e) option=--edit ;;
+    -h) option=--help ;;
+    -i) option=--increment ;;
+    -m) option=--message ;;
+    -r) option=--repo ;;
+    -s) option=--script ;;
+    -t) option=--tag ;;
+    -v) option=--version ;;
+  esac
+
+  case $option in
+    --help)
+      echo "$usage" ; exit ;;
+    --version)
+      node -p 'require("xyz/package.json").version' ; exit ;;
+    --script)
+      scripts+=("$1") ; shift ;;
+    --dry-run|--edit)
+      options[${option:2}]=true ;;
     *)
-      echo "Unrecognized option $option" >&2
-      exit 1
+      if [[ $option =~ ^--(.+)$ && -n ${options[${BASH_REMATCH[1]}]+x} ]] ; then
+        options[${BASH_REMATCH[1]}]="$1" ; shift
+      else
+        abort "Unrecognized option $option"
+      fi
   esac
 done
 
-[[ $(git rev-parse --abbrev-ref HEAD) == "$branch" ]] ||
-  (echo "Current branch does not match specified --branch" >&2 ; exit 1)
+[[ $(git rev-parse --abbrev-ref HEAD) == "${options[branch]}" ]] ||
+  abort "Current branch does not match specified --branch"
 
 git diff --quiet ||
-  (echo "Working directory contains unstaged changes" >&2 ; exit 1)
+  abort "Working directory contains unstaged changes"
 
 name=$(node -p "require('./package.json').name" 2>/dev/null) ||
-  (echo "Cannot read package name" >&2 ; exit 1)
+  abort "Cannot read package name"
 
 version=$(node -p "require('./package.json').version" 2>/dev/null) ||
-  (echo "Cannot read package version" >&2 ; exit 1)
+  abort "Cannot read package version"
 
-next_version=$(inc "$prerelease_label" "$increment" "$version")
+next_version=$(inc "${options[prerelease-label]}" \
+                   "${options[increment]}" \
+                   "$version")
 
-message="${message_template//X.Y.Z/$next_version}"
-tag="${tag_template//X.Y.Z/$next_version}"
+message="${options[message]//X.Y.Z/$next_version}"
+tag="${options[tag]//X.Y.Z/$next_version}"
 
 if type tput &>/dev/null ; then
   bold=$(tput bold)
@@ -195,7 +208,7 @@ run() {
     fi
   done
   echo
-  if [[ $dry_run == false ]] ; then
+  if [[ ${options[dry-run]} == false ]] ; then
     "$@"
   fi
 }
@@ -219,10 +232,12 @@ run env VERSION="$next_version" node -e '
 run git add package.json
 
 declare -a commit_options=(--message "$message")
-[[ $edit == true ]] && commit_options+=(--edit)
+[[ ${options[edit]} == true ]] && commit_options+=(--edit)
 run git commit "${commit_options[@]}"
 run git tag --annotate "$tag" --message "$message"
-run git push --atomic "$repo" "refs/heads/$branch" "refs/tags/$tag"
+run git push --atomic "${options[repo]}" \
+  "refs/heads/${options[branch]}" \
+  "refs/tags/$tag"
 
 run env VERSION="$next_version" PREVIOUS_VERSION="$version" \
-        bash -c "$publish_command"
+        bash -c "${options[publish-command]}"

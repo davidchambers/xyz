@@ -8,6 +8,8 @@ steps with a single command:
 
 Several things will happen if one elects to continue:
 
+    npm prune
+    npm test
     env VERSION=0.6.1 node -e '
       var pkg = require("./package.json");
       pkg.version = process.env.VERSION;
