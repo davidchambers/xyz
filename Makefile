@@ -4,6 +4,7 @@ XYZ = ./xyz --repo git@github.com:davidchambers/xyz.git
 
 .PHONY: lint
 lint:
+	$(SHELLCHECK) --version
 	$(SHELLCHECK) -- xyz
 
 

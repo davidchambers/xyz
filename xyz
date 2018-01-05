@@ -66,7 +66,7 @@ Options:
 "
 
 abort() {
-  printf "%s\n" "$1" >&2
+  printf '%s\n' "$1" >&2
   exit 1
 }
 
@@ -102,7 +102,7 @@ inc() {
           for (( idx = ${#xs[@]} - 1 ; idx > 0 ; idx -= 1 )) ; do
             pattern="^($number)$"
             if [[ ${xs[idx]} =~ $pattern ]] ; then
-              parts=(${xs[@]})
+              parts=("${xs[@]}")
               (( parts[idx] += 1 ))
               break
             fi
