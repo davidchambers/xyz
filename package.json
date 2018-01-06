@@ -10,6 +10,12 @@
     "release",
     "tool"
   ],
+  "files": [
+    "/LICENSE",
+    "/README.md",
+    "/package.json",
+    "/xyz"
+  ],
   "bin": "./xyz",
   "homepage": "https://github.com/davidchambers/xyz",
   "bugs": "https://github.com/davidchambers/xyz/issues",
