@@ -1,8 +1,2 @@
 language: bash
-addons:
-  apt:
-    sources:
-      - debian-sid
-    packages:
-      - shellcheck
 script: make lint
