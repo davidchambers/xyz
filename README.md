@@ -49,7 +49,8 @@ xyz uses a feature added in Bash 4, released in 2009. macOS users should run
             Specify the level of the current version number to increment.
             Valid levels: 'major', 'minor', 'patch', 'premajor', 'preminor',
             'prepatch', and 'prerelease'. 'patch' is assumed if this option
-            is omitted.
+            is omitted. Choosing one of the pre-releases causes the npm dist-tag
+            to be set according to --prerelease-label.
 
     -m --message <template>
             Specify the format of the commit (and tag) message.
@@ -59,13 +60,17 @@ xyz uses a feature added in Bash 4, released in 2009. macOS users should run
        --prerelease-label <label>
             Specify the label to be used in the version number when publishing
             a pre-release version (e.g. 'beta' is the label in '2.0.0-beta.0').
-            'rc' is assumed if this option is omitted.
+            'rc' is assumed if this option is omitted. If the release is a
+            pre-release, as indicated by --increment, the --prerelease-label will
+            be used to create an npm dist-tag for the release.
 
        --publish-command <command>
             Specify the command to be run to publish the package. It may refer
             to the VERSION and PREVIOUS_VERSION environment variables. A no-op
             command (':' or 'true') prevents the package from being published
             to a registry. 'npm publish' is assumed if this option is omitted.
+            If this option is provided, the --prerelease-label will not be used
+            to create an npm dist-tag for the release.
 
     -r --repo <repository>
             Specify the remote repository to which to 'git push'.
