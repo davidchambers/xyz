@@ -1,6 +1,6 @@
 {
   "name": "xyz",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Publish npm packages with fewer screw-ups",
   "license": "WTFPL",
   "author": "David Chambers <dc@davidchambers.me>",
