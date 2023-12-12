@@ -14,7 +14,7 @@ Options:
 -b --branch <name>
         Specify the branch from which new versions must be published.
         xyz aborts if run from any other branch to prevent accidental
-        publication of feature branches. 'master' is assumed if this
+        publication of feature branches. 'main' is assumed if this
         option is omitted.
 
 -e --edit
@@ -146,7 +146,7 @@ check_bash_version() {
 check_bash_version
 
 declare -A options=(
-  [branch]=master
+  [branch]=main
   [dry-run]=false
   [edit]=false
   [increment]=patch
