@@ -71,7 +71,7 @@ Options:
 "
 
 abort() {
-  printf '%s\n' "$1" >&2
+  printf '%s\n' "$@" >&2
   exit 1
 }
 
@@ -126,6 +126,24 @@ inc() {
   fi
   printf %s "$version"
 }
+
+if type tput &>/dev/null ; then
+  bold=$(tput bold)
+  smul=$(tput smul)
+  rmul=$(tput rmul)
+  reset=$(tput sgr0)
+fi
+
+check_bash_version() {
+  if (( BASH_VERSINFO[0] < 4 )) ; then
+    local xyz
+    xyz="$(IFS=.; echo "${BASH_VERSINFO[*]:0:3}")"
+    abort \
+      "Inadequate Bash version: ${bold}${xyz}${reset} < ${bold}4.0.0${reset}" \
+      "${smul}https://github.com/davidchambers/xyz/issues/51${rmul}"
+  fi
+}
+check_bash_version
 
 declare -A options=(
   [branch]=master
@@ -200,11 +218,6 @@ next_version=$(inc "${options[prerelease-label]}" \
 
 message="${options[message]//X.Y.Z/$next_version}"
 tag="${options[tag]//X.Y.Z/$next_version}"
-
-if type tput &>/dev/null ; then
-  bold=$(tput bold)
-  reset=$(tput sgr0)
-fi
 
 printf "Current version is %s. Press [enter] to publish %s." \
        "${bold}${version}${reset}" \

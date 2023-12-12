@@ -21,9 +21,11 @@ Several things will happen if one elects to continue:
     git push --atomic origin refs/heads/master refs/tags/v0.6.1
     env VERSION=0.6.1 PREVIOUS_VERSION=0.6.0 bash -c 'npm publish'
 
-_**macOS Mojave**, released in 2018, provides a version of Bash from 2007.
-xyz uses a feature added in Bash 4, released in 2009. macOS users should run
-`brew install bash` to install a compatible Bash version._
+> [!IMPORTANT]
+>
+> **macOS Mojave**, released in 2018, provides a version of Bash from 2007.
+> xyz uses a feature added in Bash 4, released in 2009. macOS users should run
+> `brew install bash` to install a compatible Bash version.
 
 ## Usage
 
