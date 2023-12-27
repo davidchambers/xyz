@@ -100,7 +100,7 @@ inc() {
     prerelease)
       case ${BASH_REMATCH[6]} in
         '') z+=1 ;;
-        $prerelease_label)
+        "$prerelease_label")
           local idx
           local -a xs
           IFS=. read -r -a xs <<<"$qual"
