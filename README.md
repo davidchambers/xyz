@@ -18,7 +18,7 @@ Several things will happen if one elects to continue:
     git add package.json
     git commit --message 'Version 0.6.1'
     git tag --annotate v0.6.1 --message 'Version 0.6.1'
-    git push --atomic origin refs/heads/master refs/tags/v0.6.1
+    git push --atomic origin refs/heads/main refs/tags/v0.6.1
     env VERSION=0.6.1 PREVIOUS_VERSION=0.6.0 bash -c 'npm publish'
 
 > [!IMPORTANT]
@@ -41,7 +41,7 @@ Several things will happen if one elects to continue:
     -b --branch <name>
             Specify the branch from which new versions must be published.
             xyz aborts if run from any other branch to prevent accidental
-            publication of feature branches. 'master' is assumed if this
+            publication of feature branches. 'main' is assumed if this
             option is omitted.
 
     -e --edit
