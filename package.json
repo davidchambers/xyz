@@ -1,6 +1,6 @@
 {
   "name": "xyz",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Publish npm packages with fewer screw-ups",
   "license": "WTFPL",
   "author": "David Chambers <dc@davidchambers.me>",
@@ -17,6 +17,9 @@
     "/xyz"
   ],
   "bin": "./xyz",
+  "scripts": {
+    "test": "make lint"
+  },
   "homepage": "https://github.com/davidchambers/xyz",
   "bugs": "https://github.com/davidchambers/xyz/issues",
   "repository": {
